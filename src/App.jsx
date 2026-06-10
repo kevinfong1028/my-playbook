@@ -1,3 +1,4 @@
+import MeshBackground from './components/MeshBackground'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Projects from './components/Projects'
@@ -6,7 +7,8 @@ import Footer from './components/Footer'
 
 export default function App() {
   return (
-    <div className="bg-slate-900 min-h-screen text-white">
+    <div className="relative min-h-screen font-sans text-fg antialiased">
+      <MeshBackground />
       <Navbar />
       <main>
         <Hero />
