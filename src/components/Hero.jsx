@@ -13,11 +13,11 @@ export default function Hero() {
           <span className="text-dim">$</span> whoami
         </p>
         <h1 className="mb-4 text-6xl font-bold leading-[1.05] tracking-tight text-fg">
-          Your Name
+          Kevin Feng <sub className="text-[0.45em] font-normal text-mut tracking-[0.2em]">馮叔恩</sub>
         </h1>
         <h2 className="mb-7 flex items-center font-mono text-2xl text-mut">
           <span className="mr-2 text-acc">&gt;</span>
-          <span>{typed}</span>
+          <span className="opacity-60">{typed}</span>
           <span className="cursor ml-0.5 h-6"></span>
         </h2>
         <p className="mb-9 max-w-xl text-[15px] leading-relaxed text-mut">
