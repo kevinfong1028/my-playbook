@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { Github, Linkedin } from 'lucide-react'
 import { useTypewriter } from '../hooks/useTypewriter'
+import CareerPanel from './CareerPanel'
 
 const roles = ['Frontend Developer', 'React Engineer', 'Vue.js Developer', 'UI Engineer']
 
 export default function Hero() {
   const typed = useTypewriter(roles)
+  const [careerOpen, setCareerOpen] = useState(false)
 
   return (
     <section id="about" className="hero-glow relative flex min-h-screen flex-col justify-center px-6 pt-16">
@@ -32,12 +35,12 @@ export default function Hero() {
           >
             查看作品集 <span className="transition-transform group-hover:translate-x-1">→</span>
           </a>
-          <a
-            href="#contact"
+          <button
+            onClick={() => setCareerOpen(true)}
             className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-line2 px-6 py-3 font-mono text-sm font-medium text-mut transition-colors hover:border-acc hover:text-acc"
           >
-            <span className="text-dim">$</span> 聯絡我
-          </a>
+            <span className="text-dim">$</span> 經歷
+          </button>
         </div>
         <div className="flex items-center gap-5">
           <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub" className="text-dim transition-colors hover:text-acc">
@@ -48,6 +51,8 @@ export default function Hero() {
           </a>
         </div>
       </div>
+
+      <CareerPanel open={careerOpen} onClose={() => setCareerOpen(false)} />
     </section>
   )
 }
