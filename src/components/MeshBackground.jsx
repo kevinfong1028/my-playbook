@@ -19,8 +19,9 @@ export default function MeshBackground() {
     let dpr = Math.min(window.devicePixelRatio || 1, 2)
     let w = 0, h = 0
     let nodes = []
-    const ptr = { x: -9999, y: -9999, active: false }
-    const eased = { x: -9999, y: -9999 }
+    // strength: 目標值 (1=在視窗內, 0=離開)；easedStrength: 緩動後的實際值
+    const ptr = { x: 0, y: 0, strength: 0 }
+    const eased = { x: 0, y: 0, strength: 0 }
 
     const makeNodes = () => {
       const count = Math.round((w * h) / DENSITY)
@@ -44,6 +45,9 @@ export default function MeshBackground() {
       canvas.style.width = w + 'px'
       canvas.style.height = h + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // 初始化 eased 位置到畫面中心，避免首次進入時從奇怪位置緩動
+      ptr.x = w / 2; ptr.y = h / 2
+      eased.x = w / 2; eased.y = h / 2
       makeNodes()
     }
     resize()
@@ -51,8 +55,12 @@ export default function MeshBackground() {
     const step = () => {
       eased.x += (ptr.x - eased.x) * 0.1
       eased.y += (ptr.y - eased.y) * 0.1
-      const px = ptr.active ? (eased.x - w / 2) / (w / 2) : 0
-      const py = ptr.active ? (eased.y - h / 2) / (h / 2) : 0
+      // strength 緩動：進入/離開都平滑過渡，避免瞬間跳動
+      eased.strength += (ptr.strength - eased.strength) * 0.08
+
+      const s = eased.strength
+      const px = ((eased.x - w / 2) / (w / 2)) * s
+      const py = ((eased.y - h / 2) / (h / 2)) * s
 
       for (const n of nodes) {
         n.x += n.vx; n.y += n.vy
@@ -76,11 +84,11 @@ export default function MeshBackground() {
           if (d < reach) {
             const t = 1 - d / reach
             let glow = 0
-            if (ptr.active) {
+            if (s > 0.01) {
               const mx = (a.rx + b.rx) / 2 - eased.x
               const my = (a.ry + b.ry) / 2 - eased.y
               const pd = Math.hypot(mx, my)
-              if (pd < PTR) glow = (1 - pd / PTR) ** 2
+              if (pd < PTR) glow = (1 - pd / PTR) ** 2 * s
             }
             const alpha = (0.03 + t * 0.08) * (0.45 + zAvg * 0.85) + glow * 0.3
             ctx.strokeStyle = `rgba(${RGB},${alpha})`
@@ -93,10 +101,10 @@ export default function MeshBackground() {
       for (const n of nodes) {
         let r = 0.5 + n.z * 1.8
         let a = 0.18 + n.z * 0.42
-        if (ptr.active) {
+        if (s > 0.01) {
           const pd = Math.hypot(n.rx - eased.x, n.ry - eased.y)
           if (pd < PTR) {
-            const e = (1 - pd / PTR) ** 2
+            const e = (1 - pd / PTR) ** 2 * s
             r += e * 1.8
             a = Math.min(1, a + e * 0.5)
           }
@@ -109,8 +117,8 @@ export default function MeshBackground() {
     let raf = 0
     const loop = () => { step(); raf = requestAnimationFrame(loop) }
 
-    const onMove = (e) => { ptr.x = e.clientX; ptr.y = e.clientY; ptr.active = true }
-    const onLeave = () => { ptr.active = false }
+    const onMove = (e) => { ptr.x = e.clientX; ptr.y = e.clientY; ptr.strength = 1 }
+    const onLeave = () => { ptr.strength = 0 }
 
     if (reduced) {
       step()
