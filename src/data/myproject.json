@@ -1,0 +1,13 @@
+{
+	"projects": [
+		{
+			"id": "a",
+			"title": "專案名稱",
+			"description": "一兩句簡短描述，說明這個專案做什麼、解決什麼問題。",
+			"tags": ["React", "Node.js", "PostgreSQL"],
+			"github": "",
+			"demo": "",
+			"detail": "完整說明：起因、你負責的範圍、技術決策、成果。"
+		}
+	]
+}
